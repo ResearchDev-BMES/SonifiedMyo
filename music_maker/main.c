@@ -177,14 +177,22 @@ int main(void){
 	// Reset the VS1053
 	VS1053_Reset();
 
-	// Setup the
+	// Setup the MIDI Channel 0
 	midiSetChannelBank(0, VS1053_BANK_MELODY);
 	midiSetInstrument(0, VS1053_GM1_OCARINA);
 	midiSetChannelVolume(0, 127);
+	midiNoteOn(0, 70, 127);
+	Delay(1000);
+
+	// Setup the MIDI Channel 1
+	midiSetChannelBank(1, VS1053_BANK_MELODY);
+	midiSetInstrument(1, VS1053_GM1_OCARINA);
+	midiSetChannelVolume(1, 0);
+	midiNoteOn(1, 60, 127);
 
 	// Setup variables for ADC
 	uint32_t ADC_Output[1];
-	uint8_t velocity;
+	uint8_t volume;
 
     // Infinite Loop of execution
     while(1)
@@ -198,10 +206,9 @@ int main(void){
 		UARTprintf("AIN8 = %4d\n", ADC_Output[0]);
 
 		// Play Sound as according to voltage level
-		velocity = inputMapping(ADC_Output[0], 3000, 4000, 90, 127);
-		midiNoteOff(0, 60, 0);
-		midiNoteOn(0, 60, velocity);
-		UARTprintf("Volume Level = %4d\n", velocity);
+		volume = inputMapping(ADC_Output[0], 3000, 4000, 50, 127);
+		midiSetChannelVolume(0, volume);
+		UARTprintf("Volume Level = %4d\n", volume);
 
 		// Delay
 		Delay(100);
